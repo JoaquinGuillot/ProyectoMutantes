@@ -1,7 +1,5 @@
 package com.example.mutantes.entities;
 
-import com.example.mutantes.search.Arbol;
-import com.example.mutantes.services.ArbolService;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
