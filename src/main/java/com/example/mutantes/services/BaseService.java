@@ -1,7 +1,7 @@
 package com.example.mutantes.services;
 
 import java.util.List;
-
+//Servicio base genérico para mutantes
 public interface BaseService<E> {
     public List<E> findAll() throws Exception;
     public E findById(Long id) throws Exception;
