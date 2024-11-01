@@ -1,5 +1,5 @@
 FROM amazoncorretto:17-alpine-jdk
 
-COPY out/artifacts/mutantes_jar/mutantes.jar app.jar
+COPY build/libs/mutantes-0.0.1-SNAPSHOT.jar
 
 ENTRYPOINT ["java" , "-jar" , "/app.jar"]

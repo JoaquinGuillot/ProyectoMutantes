@@ -65,3 +65,6 @@ tasks.named('asciidoctor') {
 	inputs.dir snippetsDir
 	dependsOn test
 }
+bootJar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE // Excluir duplicados
+}
