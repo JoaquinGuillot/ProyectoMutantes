@@ -17,6 +17,7 @@ public class MutanteService implements BaseService<Mutante> {
     @Autowired
     private MutanteRepository mutanteRepository;
 
+    //Genero mi árbol y el la longitud de la secuencia a buscar
     private Arbol arbol;
     private static final int LONGITUD_SECUENCIA = 4;
 
@@ -32,6 +33,7 @@ public class MutanteService implements BaseService<Mutante> {
         arbol.insertar("CCCC");
         arbol.insertar("GGGG");
     }
+    @Transactional
     public boolean analizarADN(Mutante persona) {
         if (persona.getAdn() == null || persona.getAdn().length == 0) {
             throw new IllegalArgumentException("Secuencia de ADN inválida");
@@ -63,7 +65,10 @@ public class MutanteService implements BaseService<Mutante> {
         }
     }
 
-    @Override
+/*En una primera instancia generé el metodo save de forma independiente
+ para guardar personas sin verificar si era mutante mutante,
+pero a fines prácticos decidí implementar unicamente su lógica en el método "isMutant"
+ */
     @Transactional
     public Mutante save(Mutante entity) throws Exception {
         try{
@@ -100,7 +105,7 @@ public class MutanteService implements BaseService<Mutante> {
         }
     }
 
-
+    @Transactional
     private boolean isMutant(String[] adn) {
 
         try {

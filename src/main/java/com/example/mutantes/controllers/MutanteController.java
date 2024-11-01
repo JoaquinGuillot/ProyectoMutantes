@@ -35,14 +35,7 @@ public class MutanteController {
         }
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> save(@RequestBody Mutante entity) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(mutanteService.save(entity));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Error. Por favor intente más tarde.\"}");
-        }
-    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Mutante entity) {
@@ -67,9 +60,9 @@ public class MutanteController {
             boolean esMutante = mutanteService.analizarADN(persona);
             return esMutante ?
                     //En caso de que la persona ingresada sea mutante  devuelve codigo 200
-                    ResponseEntity.ok().build() :
+                    ResponseEntity.ok("La persona es un mutante") :
                     //En caso de que no sea mutante arroja codigo 403
-                    ResponseEntity.status(403).build();
+                    ResponseEntity.status(403).body("La persona ingresada no es un mutante");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("{\"error\":\"Error. Los datos ingresados no son válidos.\"}");
         }

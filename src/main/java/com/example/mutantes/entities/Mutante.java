@@ -15,7 +15,10 @@ import org.hibernate.envers.Audited;
 @Setter
 @Audited
 public class Mutante {
-
+/*
+   A fines prácticos para mantener una mejor auditoria decidi agregar campos adicionales
+   a mi clase mutante
+ */
         @Id
         @GeneratedValue
         private Long id;
