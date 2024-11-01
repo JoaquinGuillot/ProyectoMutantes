@@ -17,7 +17,7 @@ public class MutanteService implements BaseService<Mutante> {
     @Autowired
     private MutanteRepository mutanteRepository;
 
-    //Genero mi árbol y el la longitud de la secuencia a buscar
+    //Genero mi árbol y la longitud de la secuencia a buscar
     private Arbol arbol;
     private static final int LONGITUD_SECUENCIA = 4;
 
