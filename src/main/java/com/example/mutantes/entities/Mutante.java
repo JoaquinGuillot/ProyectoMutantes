@@ -14,7 +14,7 @@ import org.hibernate.envers.Audited;
 @Getter
 @Setter
 @Audited
-public class Persona{
+public class Mutante {
 
         @Id
         @GeneratedValue
@@ -23,6 +23,7 @@ public class Persona{
         private String nombre;
         @Column(name = "apellido")
         private String apellido;
-
-
+        @Column(name = "esMutante")
+        private boolean esMutante;
+        private String[] adn;
 }
