@@ -3,7 +3,8 @@ Consideraciones:
 * La documentación esta presente tanto en el archivo Documentacion mutantes.pdf como dentro del mismo código
 * Se ha hecho un deploy en Render para realizar pruebas: https://proyectomutantes.onrender.com
 * Aconsejable usar Swagger para verificar los métodos y las interacciones con la API:
-  http://proyectomutantes.onrender.com/swagger-ui/index.html 
+  http://proyectomutantes.onrender.com/swagger-ui/index.html
+  
   El proyecto cuenta con 6 métodos disponibles, 3 get, 1 put 1 delete y 1 post:
 * GET/mutant/ (getAll): Este metodo trae todos las personas guardadas en la base de datos en formato json. Ej;
                                                    {
@@ -53,3 +54,11 @@ Agregué estos métodos considerandolos funcionalidades útiles para el sistema,
 * GET/mutant/estadisticas (obtenerEstadisticas): este método nos permite obtener la cantidad de mutantes, la cantidad de no mutantes y
   la proporcion de mutantes con respecto a personas.
   
+* Se ha designado H2 como base de datos para este proyecto. Para ingresar a la misma ir a:
+  https://proyectomutantes.onrender.com/h2-console/
+  Las crecendiales de ingreso son:
+  - Driver Class: org.h2.Driver
+  - JDBC URL: jdbc:h2:mem:testdb;
+  - User Name: sa
+  - Password: *vacio*
+  En esta base de datos encontraras los datos persisistidos, que en este caso son la tabla PERSONA, PERSONA_AUD Y REVISION, siendo estas ultimas dos pertinentes para auditorías.
