@@ -8,8 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MutanteService implements BaseService<Mutante> {
@@ -107,70 +106,167 @@ pero a fines prácticos decidí implementar unicamente su lógica en el método 
 
     @Transactional
     private boolean isMutant(String[] adn) {
+    try{
 
-        try {
 
-            int n = adn.length;
-            int secuenciasEncontradas = 0;
+        int n = adn.length;
+        int secuenciasEncontradas = 0;
 
-            // Verificar horizontales
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j <= n - LONGITUD_SECUENCIA; j++) {
-                    String secuencia = adn[i].substring(j, j + LONGITUD_SECUENCIA);
-                    if (arbol.buscar(secuencia)) {
-                        secuenciasEncontradas++;
-                        if (secuenciasEncontradas > 1) return true;
-                    }
-                }
-            }
+        // Matriz para rastrear posiciones visitadas
+        boolean[][] visitado = new boolean[n][n];
 
-            // Verificar verticales
+        // Verificar horizontal y vertical en un solo bucle
+        for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                for (int i = 0; i <= n - LONGITUD_SECUENCIA; i++) {
-                    StringBuilder secuencia = new StringBuilder();
-                    for (int k = 0; k < LONGITUD_SECUENCIA; k++) {
-                        secuencia.append(adn[i + k].charAt(j));
-                    }
-                    if (arbol.buscar(secuencia.toString())) {
+                // Si la posición ya ha sido visitada, continuar
+                if (visitado[i][j]) continue;
+
+                // Verificar horizontal
+                if (j <= n - LONGITUD_SECUENCIA) {
+                    String secuenciaHorizontal = adn[i].substring(j, j + LONGITUD_SECUENCIA);
+                    if (arbol.buscar(secuenciaHorizontal)) {
                         secuenciasEncontradas++;
-                        if (secuenciasEncontradas > 1) return true;
+                        marcarVisitados(visitado, i, j, LONGITUD_SECUENCIA, true);
                     }
                 }
-            }
 
-            // Verificar diagonales principales
-            for (int i = 0; i <= n - LONGITUD_SECUENCIA; i++) {
-                for (int j = 0; j <= n - LONGITUD_SECUENCIA; j++) {
-                    StringBuilder secuencia = new StringBuilder();
+                // Verificar vertical
+                if (i <= n - LONGITUD_SECUENCIA) {
+                    StringBuilder secuenciaVertical = new StringBuilder();
                     for (int k = 0; k < LONGITUD_SECUENCIA; k++) {
-                        secuencia.append(adn[i + k].charAt(j + k));
+                        secuenciaVertical.append(adn[i + k].charAt(j));
                     }
-                    if (arbol.buscar(secuencia.toString())) {
+                    if (arbol.buscar(secuenciaVertical.toString())) {
                         secuenciasEncontradas++;
-                        if (secuenciasEncontradas > 1) return true;
+                        marcarVisitados(visitado, i, j, LONGITUD_SECUENCIA, false);
                     }
                 }
-            }
 
-            // Verificar diagonales inversas
-            for (int i = 0; i <= n - LONGITUD_SECUENCIA; i++) {
-                for (int j = LONGITUD_SECUENCIA - 1; j < n; j++) {
-                    StringBuilder secuencia = new StringBuilder();
+                // Verificar diagonal principal
+                if (i <= n - LONGITUD_SECUENCIA && j <= n - LONGITUD_SECUENCIA) {
+                    StringBuilder secuenciaDiagonal = new StringBuilder();
                     for (int k = 0; k < LONGITUD_SECUENCIA; k++) {
-                        secuencia.append(adn[i + k].charAt(j - k));
+                        secuenciaDiagonal.append(adn[i + k].charAt(j + k));
                     }
-                    if (arbol.buscar(secuencia.toString())) {
+                    if (arbol.buscar(secuenciaDiagonal.toString())) {
                         secuenciasEncontradas++;
-                        if (secuenciasEncontradas > 1) return true;
+                        marcarVisitadosDiagonal(visitado, i, j, LONGITUD_SECUENCIA, true);
                     }
                 }
-            }
 
-            return false;
-        }catch(Exception e){
-            throw new RuntimeException("Error al analizar el ADN: " + e.getMessage());
+                // Verificar diagonal inversa
+                if (i <= n - LONGITUD_SECUENCIA && j >= LONGITUD_SECUENCIA - 1) {
+                    StringBuilder secuenciaDiagonalInversa = new StringBuilder();
+                    for (int k = 0; k < LONGITUD_SECUENCIA; k++) {
+                        secuenciaDiagonalInversa.append(adn[i + k].charAt(j - k));
+                    }
+                    if (arbol.buscar(secuenciaDiagonalInversa.toString())) {
+                        secuenciasEncontradas++;
+                        marcarVisitadosDiagonal(visitado, i, j, LONGITUD_SECUENCIA, false);
+                    }
+                }
+
+                // Verificar si se encontraron más de 1 secuencia
+                if (secuenciasEncontradas > 1) return true;
+            }
         }
+
+        return false;
+    }catch (Exception e) {
+        // Manejo de excepciones
+        // Puedes registrar el error o lanzar una excepción personalizada
+        throw new RuntimeException("Error al analizar el ADN: " + e.getMessage());
+    }
+    }
+
+    // Método para marcar las posiciones visitadas en horizontal y vertical
+    private void marcarVisitados(boolean[][] visitado, int i, int j, int longitud, boolean esHorizontal) {
+        for (int k = 0; k < longitud; k++) {
+            if (esHorizontal) {
+                visitado[i][j + k] = true; // Marca horizontalmente
+            } else {
+                visitado[i + k][j] = true; // Marca verticalmente
+            }
         }
+    }
+
+    // Método para marcar las posiciones visitadas en diagonales
+    private void marcarVisitadosDiagonal(boolean[][] visitado, int i, int j, int longitud, boolean esDiagonal) {
+        for (int k = 0; k < longitud; k++) {
+            if (esDiagonal) {
+                visitado[i + k][j + k] = true; // Marca diagonalmente
+            } else {
+                visitado[i + k][j - k] = true; // Marca diagonal inversamente
+            }
+        }
+    }
+
+//    @Transactional
+//    private boolean isMutant(String[] adn) {
+//
+//        try {
+//
+//            int n = adn.length;
+//            int secuenciasEncontradas = 0;
+//
+//            // Verificar horizontales
+//            for (int i = 0; i < n; i++) {
+//                for (int j = 0; j <= n - LONGITUD_SECUENCIA; j++) {
+//                    String secuencia = adn[i].substring(j, j + LONGITUD_SECUENCIA);
+//                    if (arbol.buscar(secuencia)) {
+//                        secuenciasEncontradas++;
+//                        if (secuenciasEncontradas > 1) return true;
+//                    }
+//                }
+//            }
+//
+//            // Verificar verticales
+//            for (int j = 0; j < n; j++) {
+//                for (int i = 0; i <= n - LONGITUD_SECUENCIA; i++) {
+//                    StringBuilder secuencia = new StringBuilder();
+//                    for (int k = 0; k < LONGITUD_SECUENCIA; k++) {
+//                        secuencia.append(adn[i + k].charAt(j));
+//                    }
+//                    if (arbol.buscar(secuencia.toString())) {
+//                        secuenciasEncontradas++;
+//                        if (secuenciasEncontradas > 1) return true;
+//                    }
+//                }
+//            }
+//
+//            // Verificar diagonales principales
+//            for (int i = 0; i <= n - LONGITUD_SECUENCIA; i++) {
+//                for (int j = 0; j <= n - LONGITUD_SECUENCIA; j++) {
+//                    StringBuilder secuencia = new StringBuilder();
+//                    for (int k = 0; k < LONGITUD_SECUENCIA; k++) {
+//                        secuencia.append(adn[i + k].charAt(j + k));
+//                    }
+//                    if (arbol.buscar(secuencia.toString())) {
+//                        secuenciasEncontradas++;
+//                        if (secuenciasEncontradas > 1) return true;
+//                    }
+//                }
+//            }
+//
+//            // Verificar diagonales inversas
+//            for (int i = 0; i <= n - LONGITUD_SECUENCIA; i++) {
+//                for (int j = LONGITUD_SECUENCIA - 1; j < n; j++) {
+//                    StringBuilder secuencia = new StringBuilder();
+//                    for (int k = 0; k < LONGITUD_SECUENCIA; k++) {
+//                        secuencia.append(adn[i + k].charAt(j - k));
+//                    }
+//                    if (arbol.buscar(secuencia.toString())) {
+//                        secuenciasEncontradas++;
+//                        if (secuenciasEncontradas > 1) return true;
+//                    }
+//                }
+//            }
+//
+//            return false;
+//        }catch(Exception e){
+//            throw new RuntimeException("Error al analizar el ADN: " + e.getMessage());
+//        }
+//        }
 
         // Método para obtener estadísticas
         public EstadisticasDTO obtenerEstadisticas () {

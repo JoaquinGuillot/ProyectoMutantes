@@ -7,10 +7,6 @@ public class Arbol {
         raiz = new Nodo();
     }
 
-    public void insert(String[] adn) {
-        this.adn = adn;
-    }
-
     public void insertar(String palabra) {
         palabra = palabra.toUpperCase(); // Convertir a mayúsculas
         Nodo nodo = raiz;
